@@ -1,4 +1,4 @@
-package kmeans.service;
+package kmeans.services;
 
 import java.util.List;
 

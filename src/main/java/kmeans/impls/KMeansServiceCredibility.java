@@ -1,7 +1,8 @@
-package kmeans.impl;
+package kmeans.impls;
 
-import kmeans.model.KMeans;
-import kmeans.service.KMeansService;
+import kmeans.models.KMeans;
+import kmeans.services.KMeansService;
+
 import static kmeans.utils.KMeansUtils.completeListData;
 import static kmeans.utils.KMeansUtils.getPointsOfClusterWithMaxValue;
 

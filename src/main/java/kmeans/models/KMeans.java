@@ -1,4 +1,4 @@
-package kmeans.model;
+package kmeans.models;
 
 import java.util.ArrayList;
 import java.util.Arrays;

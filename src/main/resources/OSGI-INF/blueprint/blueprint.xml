@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<blueprint xmlns="http://www.osgi.org/xmlns/blueprint/v1.0.0"
+           xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+           xsi:schemaLocation="
+           http://www.osgi.org/xmlns/blueprint/v1.0.0 
+           https://www.osgi.org/xmlns/blueprint/v1.0.0/blueprint.xsd">
+
+    <!-- Expõe como serviço OSGi pela interface -->
+    <service id="KMeansService"
+    ref="kMeansService"
+    interface="kmeans.services.KMeansService"/>
+
+    <!-- Define o bean da sua implementação -->
+    <bean id="kMeansService" class="kmeans.impls.KMeansServiceCredibility"/>
+
+    
+</blueprint>
