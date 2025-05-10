@@ -5,40 +5,53 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.Random;
 
+/**
+ * Implementação do algoritmo K-Means com inicialização KMeans++ para dados unidimensionais (float).
+ */
 public class KMeans {
 
     private final int k;
     private final int maxIterations;
 
+    /**
+     * Construtor da classe KMeans.
+     *
+     * @param k número de clusters.
+     * @param maxIterations número máximo de iterações permitidas.
+     */
     public KMeans(int k, int maxIterations) {
         this.k = k;
         this.maxIterations = maxIterations;
     }
 
+    /**
+     * Inicializa os centróides utilizando o método KMeans++.
+     *
+     * @param data lista de pontos de dados a serem agrupados.
+     * @return array de centróides iniciais.
+     */
     public float[] initCentroids(List<Float> data) {
         Random rand = new Random();
         int size_data = data.size();
-
-        // Lista de centroides
         List<Float> centroids = new ArrayList<>();
 
         // Passo 1: escolher o primeiro centróide aleatoriamente
         float firstCentroid = data.get(rand.nextInt(size_data));
         centroids.add(firstCentroid);
 
-        // Lista de mínimas distâncias para cada ponto
+        // Lista de mínimas distâncias para cada ponto até o centróide mais próximo
         double[] minDistances = new double[size_data];
         Arrays.fill(minDistances, Double.MAX_VALUE);
 
-        // Passo 2: escolher os demais centróides
+        // Passo 2: selecionar os próximos centróides
         while (centroids.size() < this.k) {
-            // Para cada ponto, calcular a menor distância ao centróide mais próximo
-            double total = 0.0; // Soma das menores distâncias para cada centróide
-            float lastCentroid = centroids.get(centroids.size() - 1); // Último centróide adicionado
+            double total = 0.0;
 
+            // Atualizar as distâncias mínimas de cada ponto ao centróide mais próximo
+            float lastCentroid = centroids.get(centroids.size() - 1);
             for (int i = 0; i < size_data; i++) {
-                float aux_data = data.get(i);
-                double dist = Math.pow(aux_data - lastCentroid, 2); // Distância entre o ponto e o centróide
+                float point = data.get(i);
+                double dist = Math.pow(point - lastCentroid, 2);
 
                 if (dist < minDistances[i]) {
                     minDistances[i] = dist;
@@ -46,12 +59,9 @@ public class KMeans {
                 total += minDistances[i];
             }
 
-            // Passo 3: escolher novo centróide com probabilidade proporcional à distância
-
-            // Escolher um valor aleatório entre o total das distâncias, pensar na lógica de uma roleta
+            // Passo 3: seleção probabilística do próximo centróide (roleta)
             double r = rand.nextDouble() * total;
             double cumulative = 0.0;
-
             for (int i = 0; i < size_data; i++) {
                 cumulative += minDistances[i];
                 if (cumulative >= r) {
@@ -61,7 +71,7 @@ public class KMeans {
             }
         }
 
-        // Converter lista para array de float
+        // Converter lista para array
         float[] result = new float[centroids.size()];
         for (int i = 0; i < centroids.size(); i++) {
             result[i] = centroids.get(i);
@@ -70,20 +80,30 @@ public class KMeans {
         return result;
     }
 
+    /**
+     * Executa o algoritmo K-Means nos dados fornecidos e retorna o cluster de cada ponto.
+     *
+     * @param data lista de pontos de dados a serem agrupados.
+     * @return array de inteiros representando o índice do cluster de cada ponto.
+     */
     public int[] fitPredict(List<Float> data) {
         Random rand = new Random();
+
+        // Inicializa os centróides
         float[] centroids = Arrays.copyOf(initCentroids(data), this.k);
         float[] newCentroids = new float[this.k];
+
         int[] clusterAssignment = new int[data.size()];
         boolean converged = false;
         int iteration = 0;
         float tolerance = 1e-6f;
 
+        // Loop principal do K-Means
         while (!converged && iteration < this.maxIterations) {
             int[] clusterSizes = new int[k];
             Arrays.fill(newCentroids, 0);
 
-            // Passo 1: Atribuir pontos aos clusters
+            // Etapa de atribuição: associa cada ponto ao centróide mais próximo
             for (int i = 0; i < data.size(); i++) {
                 float point = data.get(i);
                 float minDist = Float.MAX_VALUE;
@@ -102,13 +122,13 @@ public class KMeans {
                 clusterSizes[bestCluster]++;
             }
 
-            // Passo 2: Atualizar centróides e verificar convergência
+            // Etapa de atualização: calcula novos centróides e verifica convergência
             converged = true;
             for (int c = 0; c < k; c++) {
                 if (clusterSizes[c] > 0) {
                     newCentroids[c] /= clusterSizes[c];
                 } else {
-                    // Heurística mais eficiente para clusters vazios
+                    // Se um cluster ficou vazio, reinicializa aleatoriamente
                     newCentroids[c] = data.get(rand.nextInt(data.size()));
                 }
 
@@ -117,15 +137,15 @@ public class KMeans {
                 }
             }
 
-            // Swap para evitar cópias
+            // Troca os arrays para a próxima iteração
             float[] temp = centroids;
             centroids = newCentroids;
             newCentroids = temp;
+
             iteration++;
         }
 
         System.out.println("Iterações: " + iteration);
         return clusterAssignment;
     }
-
 }
