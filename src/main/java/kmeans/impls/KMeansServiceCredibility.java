@@ -36,18 +36,20 @@ public class KMeansServiceCredibility implements KMeansService {
         int k = 4;                 // Número de clusters
         int maxIterations = 100;  // Máximo de iterações permitidas
 
+        List<Float> dataCopy = new ArrayList<>(data);
+
         // Preenche a lista com -1.0f até ter pelo menos k elementos
-        completeListData(data, k);
+        completeListData(dataCopy, k);
 
         // Instancia e executa o algoritmo K-Means
         KMeans kmeans = new KMeans(k, maxIterations);
-        int[] clusters_of_points = kmeans.fitPredict(data);
+        int[] clusters_of_points = kmeans.fitPredict(dataCopy);
 
         // Organiza os pontos por cluster para exibição
         Map<Integer, List<Float>> clusterMap = new HashMap<>();
-        for (int i = 0; i < data.size(); i++) {
+        for (int i = 0; i < dataCopy.size(); i++) {
             int cluster = clusters_of_points[i];
-            clusterMap.computeIfAbsent(cluster, key -> new ArrayList<>()).add(data.get(i));
+            clusterMap.computeIfAbsent(cluster, key -> new ArrayList<>()).add(dataCopy.get(i));
         }
 
         // Exibe os clusters e seus respectivos pontos
@@ -60,7 +62,7 @@ public class KMeansServiceCredibility implements KMeansService {
         }
 
         // Recupera os pontos do cluster que contém o maior valor (ignorando -1.0f)
-        List<Float> points_in_cluster_with_max_value = getPointsOfClusterWithMaxValue(data, clusters_of_points);
+        List<Float> points_in_cluster_with_max_value = getPointsOfClusterWithMaxValue(dataCopy, clusters_of_points);
 
         System.out.println("\nPontos no cluster que contém o maior valor:");
         for (float point : points_in_cluster_with_max_value) {
