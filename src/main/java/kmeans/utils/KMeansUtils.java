@@ -1,7 +1,9 @@
 package kmeans.utils;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 /**
  * Classe utilitária para operações auxiliares relacionadas ao algoritmo K-Means.
@@ -22,15 +24,18 @@ public class KMeansUtils {
     }
 
     /**
-     * Retorna os pontos do cluster que contém o maior valor da lista de dados,
-     * excluindo os elementos com valor igual a -1.0f (considerados placeholders).
+     * Retorna uma lista de valores únicos pertencentes ao mesmo cluster
+     * que contém o maior valor da lista de dados fornecida.
+     * 
+     * <p>Valores com o marcador -1.0f (preenchimento artificial) são ignorados.
+     * Valores duplicados não são incluídos mais de uma vez no resultado.</p>
      *
-     * @param data lista de dados original.
-     * @param clusterAssignment array que indica o cluster de cada ponto.
-     * @return lista contendo apenas os pontos diferentes de -1.0f do cluster que possui o maior valor.
+     * @param data Lista de valores a serem analisados (ex: credibilidades).
+     * @param clusterAssignment Vetor indicando o cluster de cada ponto da lista {@code data}.
+     * @return Lista de valores únicos pertencentes ao cluster do maior valor (sem repetições e sem -1.0f).
      */
     public static List<Float> getPointsOfClusterWithMaxValue(List<Float> data, int[] clusterAssignment) {
-        // Encontrar o índice do maior valor
+        // Encontrar o índice do maior valor da lista
         int maxIndex = 0;
         for (int i = 1; i < data.size(); i++) {
             if (data.get(i) > data.get(maxIndex)) {
@@ -38,17 +43,22 @@ public class KMeansUtils {
             }
         }
 
-        // Identificar o cluster ao qual o maior valor pertence
+        // Identificar a qual cluster pertence o maior valor
         int clusterOfMax = clusterAssignment[maxIndex];
 
-        // Coletar todos os dados desse cluster, exceto os com valor -1.0f
-        List<Float> result = new ArrayList<>();
+        // Usar um Set para garantir que os valores sejam únicos
+        Set<Float> result = new HashSet<>();
+
+        // Adicionar ao resultado apenas valores únicos do mesmo cluster e diferentes de -1.0f
         for (int i = 0; i < data.size(); i++) {
-            if (clusterAssignment[i] == clusterOfMax && data.get(i) != -1.0f) {
-                result.add(data.get(i));
+            float value = data.get(i);
+            if (clusterAssignment[i] == clusterOfMax && value != -1.0f) {
+                result.add(value);
             }
         }
 
-        return result;
+        // Converter o conjunto em lista antes de retornar
+        return new ArrayList<>(result);
     }
+    
 }
