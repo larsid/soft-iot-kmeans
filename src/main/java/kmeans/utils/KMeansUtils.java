@@ -26,12 +26,11 @@ public class KMeansUtils {
     /**
      * Retorna uma lista de valores únicos pertencentes ao mesmo cluster
      * que contém o maior valor da lista de dados fornecida.
-     * 
-     * <p>Valores com o marcador -1.0f (preenchimento artificial) são ignorados.
-     * Valores duplicados não são incluídos mais de uma vez no resultado.</p>
+     * Valores com o marcador -1.0f (preenchimento artificial) são ignorados.
+     * Valores duplicados não são incluídos mais de uma vez no resultado.
      *
-     * @param data Lista de valores a serem analisados (ex: credibilidades).
-     * @param clusterAssignment Vetor indicando o cluster de cada ponto da lista {@code data}.
+     * @param data Lista de valores a serem analisados.
+     * @param clusterAssignment Vetor indicando o cluster de cada ponto da lista.
      * @return Lista de valores únicos pertencentes ao cluster do maior valor (sem repetições e sem -1.0f).
      */
     public static List<Float> getPointsOfClusterWithMaxValue(List<Float> data, int[] clusterAssignment) {
